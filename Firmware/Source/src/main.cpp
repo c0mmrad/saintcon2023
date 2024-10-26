@@ -230,9 +230,7 @@ void setup() {
   WiFi.setAutoReconnect(true);
   
   if (!WifiEnable()) {
-    if (!ConfigWifi()) {
-      ESP.restart();
-    }
+    ConfigWifi(); // We are not going to restart the esp if we can't connect to wifi. That is really annoying.
   }
 
   InitAudio();

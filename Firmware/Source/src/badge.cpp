@@ -13,6 +13,8 @@ badge_info g_badgeinfo = {0};
 uint8_t badgeSerialNumbers [4][16];
 String badgeLabels [4];
 
+String skipOption = "--Skip--";
+
 volatile bool minibadgesChanged = true;
 
 const uint8_t minibadgeLEDNums[4] = {1,4,5,8};
@@ -237,6 +239,7 @@ String ChooseSsid() {
     
     Menu ssidmenu;
     ssidmenu.AllowEscape(true);
+    ssidmenu.AddOption(skipOption);
     for (int i=0; i< numSsid; ++i) {
         ssidmenu.AddOption(WiFi.SSID(i));
         if (i>=7) break;
@@ -248,6 +251,12 @@ bool ConfigWifi() {
     String ssid = ChooseSsid();
     if (ssid.isEmpty()) {
         return false;
+    }
+
+    if (ssid == skipOption) {
+        DialogWindow("WARNING!", "Not all features will be available if you aren't connected!").Run();
+        DialogWindow("WARNING!", "You can try connecting later from the main menu").Run();
+        return true;
     }
     
     String password = EntryScreen("Wifi Password", 25, "").Run();
@@ -265,7 +274,6 @@ bool ConfigWifi() {
         return true;
     }
     else {
-        ErrorScreen("Wifi error", "Unable to connect").Run();
         return false;
     }
     return false;
